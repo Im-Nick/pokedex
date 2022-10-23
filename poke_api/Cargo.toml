@@ -1,0 +1,20 @@
+[package]
+name = "poke-api"
+version = "0.1.0"
+edition = "2021"
+exclude = [
+    ".github"
+]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+http-cache-reqwest = {version = "0.5.0", features = ["manager-moka"]}
+rand = "0.8.5"
+reqwest = { version = "0.11.12", features = ["json"] }
+reqwest-middleware = "0.1.6"
+serde = { version = "1.0.145", features = ["derive"] }
+serde_json = "1.0.87"
+tokio = {version = "1.21.2", features = ["macros", "rt-multi-thread"]}
+
+
