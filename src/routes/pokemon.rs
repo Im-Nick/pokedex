@@ -4,7 +4,7 @@ use poke_api::{api::PokeApi, errors::ErrorStatus};
 use crate::errors::MyError;
 
 #[get("/{name}")]
-pub async fn get_pokemon(
+pub(crate) async fn get_pokemon(
     api: web::Data<PokeApi>,
     name: web::Path<String>,
 ) -> Result<HttpResponse, MyError> {
@@ -13,7 +13,7 @@ pub async fn get_pokemon(
 }
 
 #[get("/translated/{name}")]
-pub async fn get_pokemon_translation(
+pub(crate) async fn get_pokemon_translation(
     api: web::Data<PokeApi>,
     name: web::Path<String>,
 ) -> Result<HttpResponse, MyError> {
@@ -45,7 +45,6 @@ mod tests {
             .insert_header(ContentType::plaintext())
             .to_request();
         let resp = test::call_service(&app, req).await;
-        println!("{}", resp.status());
         assert!(resp.status().is_success());
     }
 

@@ -5,7 +5,7 @@ pub mod index {
     use actix_web::{get, HttpResponse};
 
     #[get("")]
-    pub async fn health_check() -> Result<HttpResponse, MyError> {
+    pub(crate) async fn health_check() -> Result<HttpResponse, MyError> {
         Ok(HttpResponse::Ok().finish())
     }
 }

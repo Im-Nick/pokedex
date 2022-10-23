@@ -6,7 +6,7 @@ use poke_api::api;
 
 use crate::routes::{index, pokemon};
 
-pub fn config_app(config: &mut ServiceConfig) {
+pub(crate) fn config_app(config: &mut ServiceConfig) {
     set_app_data(config);
     index_handler(config);
     poke_api_handler(config);
