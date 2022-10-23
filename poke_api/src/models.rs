@@ -20,22 +20,6 @@ pub struct Pokemon {
     pub translation: Option<TranslationType>,
 }
 
-#[derive(Serialize, Debug, Clone, Deserialize, PartialEq)]
-pub enum TranslationType {
-    Shakespeare,
-    Yoda,
-}
-
-impl TranslationType {
-    fn from(value: &str) -> Option<Self> {
-        match value {
-            "shakespeare" => Some(TranslationType::Shakespeare),
-            "yoda" => Some(TranslationType::Yoda),
-            _ => None,
-        }
-    }
-}
-
 #[derive(Deserialize)]
 struct DescriptionEntries {
     flavor_text: String,
@@ -50,16 +34,14 @@ struct DescriptionLanguages {
 fn deserialize_description<'de, D: Deserializer<'de>>(deserializer: D) -> Result<String, D::Error> {
     let mut tmp: Vec<DescriptionEntries> = Vec::deserialize(deserializer)?;
     tmp.retain(|x| x.language.name == "en");
-    let sel = tmp.choose(&mut rand::thread_rng());
-    match sel {
+    let random_description = tmp.choose(&mut rand::thread_rng());
+    match random_description {
         Some(e) => Ok(e
             .flavor_text
             .replace(|c: char| !c.is_ascii(), "")
             .replace(|c: char| c.is_whitespace(), " ")
             .replace(r"\f", " ")),
-        None => Err(de::Error::custom(
-            "Ops somethings went wrong with description entries",
-        )),
+        None => Err(de::Error::custom("Failed to fetch random description!")),
     }
 }
 
@@ -71,6 +53,22 @@ struct PokemonHabitat {
 fn deserialize_habitat<'de, D: Deserializer<'de>>(deserializer: D) -> Result<String, D::Error> {
     let tmp: PokemonHabitat = PokemonHabitat::deserialize(deserializer)?;
     Ok(tmp.name)
+}
+
+#[derive(Serialize, Debug, Clone, Deserialize, PartialEq)]
+pub enum TranslationType {
+    Shakespeare,
+    Yoda,
+}
+
+impl TranslationType {
+    fn from(value: &str) -> Option<Self> {
+        match value {
+            "shakespeare" => Some(TranslationType::Shakespeare),
+            "yoda" => Some(TranslationType::Yoda),
+            _ => None,
+        }
+    }
 }
 
 #[derive(Serialize, Debug, Default, Deserialize)]

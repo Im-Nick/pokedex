@@ -83,8 +83,8 @@ impl PokeApi {
             .error_for_status()?
             .json()
             .await?;
-        let deserialized_res = serde_json::from_value::<Translation>(res);
 
+        let deserialized_res = serde_json::from_value::<Translation>(res);
         match deserialized_res {
             Ok(e) => {
                 pokemon.description_entries = e.contents.translated;
