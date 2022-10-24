@@ -32,7 +32,6 @@ pub(crate) async fn get_pokemon_translation(
 #[cfg(test)]
 mod tests {
     use actix_web::{http::header::ContentType, test, App};
-    use poke_api::api::PokeApi;
 
     use crate::server::app_handler::config_app;
 
@@ -79,19 +78,5 @@ mod tests {
             .to_request();
         let resp = test::call_service(&app, req).await;
         assert!(resp.status().is_client_error());
-    }
-
-    #[tokio::test]
-    async fn uppercase_get_pokemon() {
-        let poke_api = PokeApi::new();
-        let res = poke_api.search("Mewtwo").await;
-        assert_eq!(res.is_ok(), true)
-    }
-
-    #[tokio::test]
-    async fn max_name_length_get_pokemon() {
-        let poke_api = PokeApi::new();
-        let res = poke_api.search("mewtwotestcasemaxlengthof24char").await;
-        assert_eq!(res.is_err(), true)
     }
 }
