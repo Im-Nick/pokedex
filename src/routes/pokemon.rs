@@ -55,6 +55,7 @@ mod tests {
             .insert_header(ContentType::plaintext())
             .to_request();
         let resp = test::call_service(&app, req).await;
+
         assert!(resp.status().is_success());
     }
 
@@ -67,16 +68,18 @@ mod tests {
             .to_request();
         let resp = test::call_service(&app, req).await;
         assert!(resp.status().is_client_error());
+        assert!(!resp.status().is_server_error());
     }
 
     #[actix_web::test]
-    async fn get_pokemon_translated_wrong_name() {
+    async fn get_pokemon_max_length_name() {
         let app = test::init_service(App::new().configure(config_app)).await;
         let req = test::TestRequest::get()
-            .uri("/pokemon/translated/metwo")
+            .uri("/pokemon/metwotestlength12341412")
             .insert_header(ContentType::plaintext())
             .to_request();
         let resp = test::call_service(&app, req).await;
         assert!(resp.status().is_client_error());
+        assert!(!resp.status().is_server_error());
     }
 }
