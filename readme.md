@@ -11,7 +11,7 @@ Clone the repository:
 ## Usage:
 
 - With [Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)
-  Enter the project root folder then:
+  enter the project root folder then:
   ```bash
   > cargo run
   ```
@@ -19,8 +19,7 @@ Clone the repository:
   ```bash
   > cargo build # pass --release option for prod build
   ```
-- With [Docker](https://www.docker.com)
-  Enter the root folder then:
+- With [Docker](https://www.docker.com) enter the root folder then:
   ```bash
   > docker build -t <image_name> .
   ```
