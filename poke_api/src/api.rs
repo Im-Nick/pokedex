@@ -17,7 +17,7 @@ pub struct PokeApi {
 }
 
 impl PokeApi {
-    pub fn new() -> Self {
+    pub fn new(poke_api: String, yoda_api: String, shakespeare_api: String) -> Self {
         PokeApi {
             client: ClientBuilder::new(Client::new())
                 .with(Cache(HttpCache {
@@ -26,9 +26,9 @@ impl PokeApi {
                     options: None,
                 }))
                 .build(),
-            poke_api: "https://pokeapi.co/api/v2/pokemon-species".to_string(),
-            yoda_api: "https://api.funtranslations.com/translate/yoda".to_string(),
-            shakespeare_api: "https://api.funtranslations.com/translate/shakespeare".to_string(),
+            poke_api,
+            yoda_api,
+            shakespeare_api,
         }
     }
 
@@ -101,17 +101,23 @@ mod tests {
     use crate::{errors::ErrorStatus, models::TranslationType};
 
     use super::PokeApi;
-
+    fn get_pokemon_api() -> PokeApi {
+        PokeApi::new(
+            "https://pokeapi.co/api/v2/pokemon-species".to_string(),
+            "https://api.funtranslations.com/translate/yoda".to_string(),
+            "https://api.funtranslations.com/translate/shakespeare".to_string(),
+        )
+    }
     #[tokio::test]
     async fn get_pokemon() {
-        let poke_api = PokeApi::new();
+        let poke_api = get_pokemon_api();
         let res = poke_api.search("mewtwo").await.unwrap();
         assert_eq!(res.name, "mewtwo")
     }
 
     #[tokio::test]
     async fn test_translate_yoda_pokemon() {
-        let poke_api = PokeApi::new();
+        let poke_api = get_pokemon_api();
         let mut res = poke_api.search("mewtwo").await.unwrap();
         let translate = poke_api.translate(&mut res).await;
 
@@ -132,7 +138,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_translate_shakespare_pokemon() {
-        let poke_api = PokeApi::new();
+        let poke_api = get_pokemon_api();
         let mut res = poke_api.search("snorlax").await.unwrap();
         let translate = poke_api.translate(&mut res).await;
 
@@ -153,21 +159,21 @@ mod tests {
 
     #[tokio::test]
     async fn get_pokemon_with_whitespaces() {
-        let poke_api = PokeApi::new();
+        let poke_api = get_pokemon_api();
         let res = poke_api.search(" mew two ").await.unwrap();
         assert_eq!(res.name, "mewtwo");
     }
 
     #[tokio::test]
     async fn uppercase_get_pokemon() {
-        let poke_api = PokeApi::new();
+        let poke_api = get_pokemon_api();
         let res = poke_api.search("mewtwo").await;
         assert_eq!(res.is_ok(), true)
     }
 
     #[tokio::test]
     async fn pokemon_max_name_length() {
-        let poke_api = PokeApi::new();
+        let poke_api = get_pokemon_api();
         let res = poke_api
             .search("mewtwopokedexooootestcaseooooooalrigthooooooooooo")
             .await;

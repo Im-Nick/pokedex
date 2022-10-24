@@ -5,6 +5,7 @@ use actix_web::web::{self, ServiceConfig};
 use poke_api::api;
 
 use crate::routes::{index, pokemon};
+use crate::settings::Settings;
 
 pub(crate) fn config_app(config: &mut ServiceConfig) {
     set_app_data(config);
@@ -13,7 +14,12 @@ pub(crate) fn config_app(config: &mut ServiceConfig) {
 }
 
 fn set_app_data(config: &mut ServiceConfig) {
-    let poke_api = api::PokeApi::new();
+    let settings = Settings::new().expect("Failed to load toml file");
+    let poke_api = api::PokeApi::new(
+        settings.api.pokemon_api,
+        settings.api.yoda_api,
+        settings.api.shakespeare_api,
+    );
     config.app_data(web::Data::new(poke_api.clone()));
 }
 
