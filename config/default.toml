@@ -1,0 +1,7 @@
+host="0.0.0.0"
+port=8080
+
+[api]
+pokemon_api="https://pokeapi.co/api/v2/pokemon-species"
+yoda_api="https://api.funtranslations.com/translate/yoda"
+shakespeare_api="https://api.funtranslations.com/translate/shakespeare"
