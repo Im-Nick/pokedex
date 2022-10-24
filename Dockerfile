@@ -28,6 +28,7 @@ RUN apk add --no-cache \
 
 # copy the binary into the final image
 COPY --from=builder /usr/app/target/x86_64-unknown-linux-musl/release/pokedex .
+COPY --from=builder /usr/app/config ./config/
 
 RUN chown user:user pokedex
 
