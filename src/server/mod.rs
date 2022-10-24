@@ -6,7 +6,6 @@ extern crate poke_api;
 
 use crate::settings::Settings;
 use actix_web::{middleware::Logger, App, HttpServer};
-use log::info;
 
 use self::app_handler::config_app;
 
@@ -21,11 +20,4 @@ pub(crate) async fn run() -> Result<(), std::io::Error> {
         .bind(server_address.clone())?
         .run()
         .await
-        .and_then(move |e| {
-            info!(
-                "Server up and running at {}:{}",
-                server_address.0, server_address.1
-            );
-            Ok(e)
-        })
 }
