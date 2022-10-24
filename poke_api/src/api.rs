@@ -67,7 +67,7 @@ impl PokeApi {
         body.insert("text", &pokemon.description_entries);
 
         let url: &str = {
-            if pokemon.is_legendary || pokemon.habitat == "cave" {
+            if pokemon.is_legendary || pokemon.habitat == Box::from("cave") {
                 &self.yoda_api
             } else {
                 &self.shakespeare_api
@@ -112,7 +112,7 @@ mod tests {
     async fn get_pokemon() {
         let poke_api = get_pokemon_api();
         let res = poke_api.search("mewtwo").await.unwrap();
-        assert_eq!(res.name, "mewtwo")
+        assert_eq!(res.name, Box::from("mewtwo"))
     }
 
     #[tokio::test]
@@ -130,7 +130,7 @@ mod tests {
                 )
             }
             Err(e) => match e.status {
-                ErrorStatus::TooManyRequests => assert_eq!(res.name, "mewtwo"),
+                ErrorStatus::TooManyRequests => assert_eq!(res.name, Box::from("mewtwo")),
                 e => panic!("{:#?}", e),
             },
         }
@@ -151,7 +151,7 @@ mod tests {
                 )
             }
             Err(e) => match e.status {
-                ErrorStatus::TooManyRequests => assert_eq!(res.name, "snorlax"),
+                ErrorStatus::TooManyRequests => assert_eq!(res.name, Box::from("snorlax")),
                 e => panic!("{:#?}", e),
             },
         }
@@ -161,7 +161,7 @@ mod tests {
     async fn get_pokemon_with_whitespaces() {
         let poke_api = get_pokemon_api();
         let res = poke_api.search(" mew two ").await.unwrap();
-        assert_eq!(res.name, "mewtwo");
+        assert_eq!(res.name, Box::from("mewtwo"));
     }
 
     #[tokio::test]

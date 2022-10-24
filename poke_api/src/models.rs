@@ -8,12 +8,12 @@ use serde::{
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Pokemon {
-    pub name: String,
+    pub name: Box<str>,
     #[serde(alias = "flavor_text_entries")]
     #[serde(deserialize_with = "deserialize_description")]
-    pub description_entries: String,
+    pub description_entries: Box<str>,
     #[serde(deserialize_with = "deserialize_habitat")]
-    pub habitat: String,
+    pub habitat: Box<str>,
     pub is_legendary: bool,
     #[serde(skip_deserializing)]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -31,16 +31,19 @@ struct DescriptionLanguages {
     name: String,
 }
 
-fn deserialize_description<'de, D: Deserializer<'de>>(deserializer: D) -> Result<String, D::Error> {
+fn deserialize_description<'de, D: Deserializer<'de>>(
+    deserializer: D,
+) -> Result<Box<str>, D::Error> {
     let mut tmp: Vec<DescriptionEntries> = Vec::deserialize(deserializer)?;
     tmp.retain(|x| x.language.name == "en");
     let random_description = tmp.choose(&mut rand::thread_rng());
     match random_description {
-        Some(e) => Ok(e
-            .flavor_text
-            .replace(|c: char| !c.is_ascii(), "")
-            .replace(|c: char| c.is_whitespace(), " ")
-            .replace(r"\f", " ")),
+        Some(e) => Ok(Box::from(
+            e.flavor_text
+                .replace(|c: char| !c.is_ascii(), "")
+                .replace(|c: char| c.is_whitespace(), " ")
+                .replace(r"\f", " "),
+        )),
         None => Err(de::Error::custom("Failed to fetch random description!")),
     }
 }
@@ -50,9 +53,9 @@ struct PokemonHabitat {
     name: String,
 }
 
-fn deserialize_habitat<'de, D: Deserializer<'de>>(deserializer: D) -> Result<String, D::Error> {
+fn deserialize_habitat<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Box<str>, D::Error> {
     let tmp: PokemonHabitat = PokemonHabitat::deserialize(deserializer)?;
-    Ok(tmp.name)
+    Ok(Box::from(tmp.name))
 }
 
 #[derive(Serialize, Debug, Clone, Deserialize, PartialEq)]
@@ -79,7 +82,7 @@ pub struct Translation {
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct TranslationContent {
-    pub translated: String,
+    pub translated: Box<str>,
     pub translation_type: Option<TranslationType>,
 }
 
@@ -92,7 +95,7 @@ fn deserialize_translation<'de, D: Deserializer<'de>>(
 
     match translation {
         Some(e) => Ok(TranslationContent {
-            translated: e.to_string(),
+            translated: Box::from(e.as_str()),
             translation_type: TranslationType::from(&translation_type),
         }),
         None => Err(de::Error::missing_field("translated")),
